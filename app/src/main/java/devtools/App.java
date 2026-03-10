@@ -3,12 +3,29 @@
  */
 package devtools;
 
-public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+import devtools.generator.AutoCrud;
 
+public class App {
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        String className = "";
+        String packageName = "";
+        String artifactName = "";
+        
+        if(args.length != 3)
+            throw new RuntimeException("Error args required [Entity, packageName, artifactName]");
+        
+        try {
+            className = args[0];
+            packageName = args[1];
+            artifactName = args[2];
+        } catch(ArrayIndexOutOfBoundsException ex) {
+            throw new RuntimeException("Error processing args: "+ex.getMessage());
+        }
+
+        System.out.println("Generating CRUD for entity: " + className);
+        System.out.println("Base package: " + packageName + "." + artifactName);
+
+        AutoCrud autoCrud = new AutoCrud(className, packageName, artifactName);
+        autoCrud.createAutoCrud();
     }
 }
