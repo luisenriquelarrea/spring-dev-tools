@@ -25,45 +25,28 @@ public class Templates {
         modeloTemplate = """
                          package com.packageName.artifactName.model;
                          
-                         import java.time.LocalDateTime;
-                         
-                         import org.springframework.data.annotation.CreatedDate;
-                         import org.springframework.data.annotation.LastModifiedDate;
-                         import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-                         
-                         import jakarta.persistence.Column;
+                         import com.packageName.artifactName.model.base.EmpresaAuditable;
+
                          import jakarta.persistence.Entity;
-                         import jakarta.persistence.EntityListeners;
                          import jakarta.persistence.Table;
                          import jakarta.persistence.GeneratedValue;
                          import jakarta.persistence.GenerationType;
                          import jakarta.persistence.Id;
-                         
-                         import lombok.Data;
+                         import lombok.Getter;
+                         import lombok.RequiredArgsConstructor;
+                         import lombok.Setter;
                          
                          @Entity
                          @Table(name = "tableName")
-                         @EntityListeners(AuditingEntityListener.class)
-                         @Data
-                         public class className {
+                         @RequiredArgsConstructor
+                         @Getter
+                         @Setter
+                         public class className extends EmpresaAuditable {
                              @Id
                              @GeneratedValue(strategy=GenerationType.IDENTITY)
                              private Long id;
 
                              private String descripcion;
-                         
-                             private int status;
-                         
-                             @CreatedDate
-                             @Column(updatable = false)
-                             private LocalDateTime createdAt;
-                             
-                             @LastModifiedDate
-                             private LocalDateTime updatedAt;
-                             
-                             private Integer userCreatedId;
-                             
-                             private Integer userUpdatedId;
                          }""";
     }
     
@@ -77,11 +60,9 @@ public class Templates {
                       
                          import java.time.LocalDateTime;
                          
-                         import lombok.Getter;
-                         import lombok.Setter;
+                         import lombok.Data;
                          
-                         @Getter
-                         @Setter
+                         @Data
                          public class classNameDto {
                              private Long id;
 
@@ -371,16 +352,14 @@ public class Templates {
                              import java.util.Map;
                              
                              @CrossOrigin(origins = "*")
-                             @RestController // This means that this class is a Controller
-                             @RequestMapping(path="/api/tableName") // This means URL's start with / (after Application path)
+                             @RestController
+                             @RequestMapping(path="/api/tableName")
                              public class classNameController {
                                  @Autowired 
                                  private classNameService objNameService;
                              
-                                 @PostMapping(path="/add") // Map ONLY POST Requests
+                                 @PostMapping(path="/add")
                                  public ResponseEntity<className> add(@RequestBody className objName) {
-                                     // @ResponseBody means the returned Entity is the response, not a view name
-                                     // @RequestParam means it is a parameter from the GET or POST request
                                      className obj = objNameService.save(objName);
                                      return ResponseEntity.ok(obj);
                                  }
@@ -420,7 +399,6 @@ public class Templates {
                              
                                  @GetMapping(path="/")
                                  public @ResponseBody List<className> all() {
-                                     // This returns a JSON or XML
                                      return objNameService.list();
                                  }
                              
@@ -451,13 +429,14 @@ public class Templates {
                                      return ResponseEntity.notFound().build();
                                  }
                                  
-                                 @PostMapping(path="/filteredList") // Map ONLY POST Requests
+                                 @PostMapping(path="/filteredList")
                                  public @ResponseBody List<classNameDto> filteredList(@RequestBody classNameDto objNameDto) {
-                                     // @ResponseBody means the returned Entity is the response, not a view name
                                      Specification<className> specs = new classNameSpecifications(objNameDto);
+
                                      int offset = objNameDto.getOffset();
                                      int limit = objNameDto.getLimit();
                                      int page = offset / limit;
+
                                      return objNameService.filteredList(specs, PageRequest.of(page, limit));
                                  }
                                  
