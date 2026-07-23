@@ -226,7 +226,6 @@ public class Templates {
         serviceImplTemplate = """
                               package com.packageName.artifactName.service;
                               
-                              import org.springframework.beans.factory.annotation.Autowired;
                               import org.springframework.data.domain.Page;
                               import org.springframework.data.domain.PageRequest;
                               import org.springframework.data.jpa.domain.Specification;
@@ -241,16 +240,17 @@ public class Templates {
                               import com.fasterxml.jackson.databind.JsonNode;
                               
                               import java.util.List;
+
+                              import lombok.RequiredArgsConstructor;
                               
                               @Service
+                              @RequiredArgsConstructor
                               public class classNameServiceImpl extends BaseServiceImpl implements classNameService {
-                                  @Autowired 
-                                  private classNameRepository repository;
+                                  
+                                  private final classNameRepository repository;
+                                                              
+                                  private final classNameMapper mapper;
                               
-                                  @Autowired
-                                  private classNameMapper mapper;
-                              
-                                  @Override
                                   public className save(className objName) {
                                       return repository.save(objName);
                                   }
@@ -321,7 +321,6 @@ public class Templates {
         controllerTemplate = """
                              package com.packageName.artifactName.controller;
                              
-                             import org.springframework.beans.factory.annotation.Autowired;
                              import org.springframework.http.HttpStatus;
                              import org.springframework.http.ResponseEntity;
                              import org.springframework.data.domain.PageRequest;
@@ -350,13 +349,16 @@ public class Templates {
                              
                              import java.util.List;
                              import java.util.Map;
+
+                             import lombok.RequiredArgsConstructor;
                              
                              @CrossOrigin(origins = "*")
                              @RestController
+                             @RequiredArgsConstructor
                              @RequestMapping(path="/api/tableName")
                              public class classNameController {
-                                 @Autowired 
-                                 private classNameService objNameService;
+
+                                 private final classNameService objNameService;
                              
                                  @PostMapping(path="/add")
                                  public ResponseEntity<className> add(@RequestBody className objName) {
